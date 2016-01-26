@@ -139,7 +139,7 @@ void AllPixTMPXDigitizer::Digitize()
 
   for(G4int itr  = 0 ; itr < nEntries ; itr++)
     {
-      G4cout << "=================itr: " << itr << G4endl;
+      // G4cout << "=================itr: " << itr << G4endl;
       //G4cout << "Thickness=" << thickness << G4endl;
       tempPixel.first  = (*hitsCollection)[itr]->GetPixelNbX();
       tempPixel.second = (*hitsCollection)[itr]->GetPixelNbY();
@@ -148,12 +148,14 @@ void AllPixTMPXDigitizer::Digitize()
       G4double ypos=(*hitsCollection)[itr]->GetPosWithRespectToPixel().y();
       G4double zpos=(*hitsCollection)[itr]->GetPosWithRespectToPixel().z()+thickness/2.0; // [mm]; zpos=thickness corresponds to the sensor side and zpos=0 corresponds to the pixel side
 
+      G4cout << "xpos=" << xpos << ", ypos=" << ypos << ", zpos=" << zpos << G4endl;
+
       AvgPosX+=tempPixel.first*pitchX+xpos+pitchX/2.0;
       AvgPosY+=tempPixel.second*pitchY+ypos+pitchY/2.0;
       
       depletionWidth=(thickness/(2*V_D))*(V_D+V_B)-2e-3; //TMath::Sqrt(V_B/V_D)*thickness; //[cm]
-      G4cout << "test depletionWidth=" << (thickness/(2*V_D))*(V_D+V_B) << "[mm]" << G4endl; 
-      G4cout << "depletionWidth=" << depletionWidth << "[mm]" << G4endl;
+      // G4cout << "test depletionWidth=" << (thickness/(2*V_D))*(V_D+V_B) << "[mm]" << G4endl; 
+      // G4cout << "depletionWidth=" << depletionWidth << "[mm]" << G4endl;
 
       pair<G4int, G4int> extraPixel;
       extraPixel = tempPixel;
@@ -163,7 +165,7 @@ void AllPixTMPXDigitizer::Digitize()
       if(zpos<depletionWidth && zpos>=0) // Only charge sharing for the depletion region //depletionWidth*10 [mm]
       	{
 	  // zpos=TMath::Abs(zpos); // sometimes zpos=-1.38778e-17 -> Due to the step size
-	  G4cout << "zpos=" << zpos << G4endl;
+	  // G4cout << "zpos=" << zpos << G4endl;
 	  // // ======= Linear ======= //
 	  // Double_t electric_field=-((V_B-V_D)/(thickness/cm)+(1-(zpos/cm)/(thickness/cm))*2*V_D/(thickness/cm));
 	  // Double_t drift_time=(zpos/cm)/(mobility_const*TMath::Abs(electric_field)); //constant drift time
@@ -174,7 +176,7 @@ void AllPixTMPXDigitizer::Digitize()
 	  // ======= Non-linear ======= //
 	  Double_t diffusion_RMS=TMath::Sqrt((TMath::K()*temperature*(thickness/cm)*(thickness/cm)/(echarge*V_D))*TMath::Log((V_B+V_D)/(V_B+V_D-2.0*V_D*(zpos/cm)/(thickness/cm))));
 	  diffusion_RMS=TMath::Sqrt(2)*diffusion_RMS*10;//[mm]
-	  G4cout << "diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
+	  // G4cout << "diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
   
 	  
 	  for(int i=-1; i<=1; i++)
@@ -235,13 +237,13 @@ void AllPixTMPXDigitizer::Digitize()
       // // // TOT noise
       // // ((*pCItr).second)=CLHEP::RandGauss::shoot(((*pCItr).second), 5.0/100.0*((*pCItr).second)); //?????
 
-      G4cout << "threshold*elec/keV=" << threshold*elec/keV << G4endl;
+      // G4cout << "threshold*elec/keV=" << threshold*elec/keV << G4endl;
 
       
       //if(((*pCItr).second)/keV > threshold*elec/keV) // over threshold !
       if(((*pCItr).second)/keV > threshold) // over threshold !
 	{
-	  G4cout << "yes" << G4endl;
+	  // G4cout << "yes" << G4endl;
 	  tempPixel.first=(*pCItr).first.first;
 	  tempPixel.second=(*pCItr).first.second;
 

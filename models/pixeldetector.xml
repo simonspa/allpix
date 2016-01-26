@@ -50,13 +50,6 @@
 <pcb_hy units="mm">39.5</pcb_hy>
 <pcb_hz units="mm">0.88</pcb_hz>
 
-<Bias_Voltage>50.0</Bias_Voltage>
-<Depletion_Voltage>30.0</Depletion_Voltage>
-<Sensor_Type>p-in-n</Sensor_Type>
-<Chip_Threshold> 1000 </Chip_Threshold>
-<Calibration_File>/afs/cern.ch/work/n/nalipour/AllPix/nalipour-dev-timepix/allpix/models/calibration_A06_W0110.txt</Calibration_File>
-
-
 </pixeldet>
 
 <!-- 50 um sensor-->
@@ -104,10 +97,10 @@
 <pcb_hy units="mm">39.5</pcb_hy>
 <pcb_hz units="mm">0.88</pcb_hz>
 
+<sensor_resistivity>5000.0</sensor_resistivity>
 <Bias_Voltage>15.0</Bias_Voltage>
-<Depletion_Voltage>10.0</Depletion_Voltage>
-<Sensor_Type>n-in-p</Sensor_Type>
-<Chip_Threshold> 1000 </Chip_Threshold>
+<Sensor_Type>p-in-n</Sensor_Type>
+<Chip_Threshold> 984. </Chip_Threshold>
 <Calibration_File>/afs/cern.ch/work/n/nalipour/AllPix/nalipour-dev-timepix/allpix/models/calibration_A06_W0110.txt</Calibration_File>
 
 </pixeldet>
