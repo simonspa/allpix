@@ -38,11 +38,13 @@ AllPixTMPXDigitizer::AllPixTMPXDigitizer(G4String modName, G4String hitsColName,
   nPixY=gD->GetNPixelsY();
   V_B=gD->GetBiasVoltage();
   V_D=gD->GetDepletionVoltage();
-  SensorType=gD->GetSensorType();
-  Threshold=gD->GetThreshold();
+  sensorType=gD->GetSensorType();
+  Threshold=gD->GetThreshold()*elec/keV;
+  CalibrationFile=gD->GetCalibrationFile();
 
+  ReadCalibrationFile();
 
-  G4cout << "V_B=" << V_B << ", V_D=" << V_D << ", SensorType=" << SensorType << ", Threhsold=" << Threshold << G4endl;
+  G4cout << "V_B=" << V_B << ", V_D=" << V_D << ", sensorType=" << sensorType << ", Threhsold=" << Threshold << G4endl;
   
 
 //G4cout << "nalipour detector thickness=" << thickness << G4endl;
@@ -91,7 +93,7 @@ void AllPixTMPXDigitizer::Digitize()
 
 
   //// ============PARAMETERS TO ADJUST================
-  string sensorType="n-in-p"; // or n-in-p
+  //string sensorType="n-in-p"; // or n-in-p
   //Double_t V_B=35; //[V] //Run 1189
   //V_B=35; //[V] //Run 2302 Vb=-35[V]
 
@@ -107,15 +109,15 @@ void AllPixTMPXDigitizer::Digitize()
   TString bulk_type="p";
   // Double_t nDopants=9.88e11;
   // V_D=30.31;
-  Double_t temperature=300; //[K]
 
-  G4double a=29.8;
-  G4double b=534.1;
-  G4double c=1817;
-  G4double t=0.7;
+
+  // G4double a=29.8;
+  // G4double b=534.1;
+  // G4double c=1817;
+  // G4double t=0.7;
   // //-----------------------//
 
-  resistivity=5000; //[ohm cm]
+  // resistivity=5000; //[ohm cm]
   ///=================================================
   //mobility_const=0.0;
   //diffusion_const=0.0;
@@ -227,7 +229,7 @@ void AllPixTMPXDigitizer::Digitize()
     {
       // Double_t threshold=CLHEP::RandGauss::shoot(m_digitIn.thl, 35); // ~35 electrons noise on the threshold
       // Double_t threshold=m_digitIn.thl;
-      Double_t threshold=3.836+CLHEP::RandGauss::shoot(0, 0.057);
+      //Double_t threshold=3.836+CLHEP::RandGauss::shoot(0, 0.057);
       // G4cout << "threshold=" << threshold << G4endl;
       // G4cout << "energy=" << ((*pCItr).second)/keV << " [keV]" << G4endl;
       // //--- Electronic noise ---//
@@ -241,7 +243,7 @@ void AllPixTMPXDigitizer::Digitize()
 
       
       //if(((*pCItr).second)/keV > threshold*elec/keV) // over threshold !
-      if(((*pCItr).second)/keV > threshold) // over threshold !
+      if(((*pCItr).second)/keV > Threshold) // over threshold !
 	{
 	  // G4cout << "yes" << G4endl;
 	  tempPixel.first=(*pCItr).first.first;
@@ -259,7 +261,9 @@ void AllPixTMPXDigitizer::Digitize()
 	  //===================================================//
 
 
-	  G4int TOT=a*((*pCItr).second)/keV+b-c/(((*pCItr).second/keV)-t);
+	  G4int TOT=energyToTOT(((*pCItr).second), SurrogateA[tempPixel.first][tempPixel.second], SurrogateB[tempPixel.first][tempPixel.second], SurrogateC[tempPixel.first][tempPixel.second], SurrogateT[tempPixel.first][tempPixel.second]);
+
+	  //TOT=a*((*pCItr).second)/keV+b-c/(((*pCItr).second/keV)-t);
 	  digit->SetPixelCounts(TOT); //TOT value
 
 	  m_digitsCollection->insert(digit);
@@ -284,4 +288,45 @@ void AllPixTMPXDigitizer::Digitize()
 
    G4double energybis=Integral*Energy/4.0; //*(TMath::Pi())*(TMath::Pi());
    return energybis;
+}
+
+
+void AllPixTMPXDigitizer::ReadCalibrationFile()
+{
+  SurrogateA = new G4double*[nPixX];
+  SurrogateB = new G4double*[nPixX];
+  SurrogateC = new G4double*[nPixX];
+  SurrogateT = new G4double*[nPixX];
+
+  std::ifstream file_a, file_b, file_c, file_t;
+  file_a.open(CalibrationFile+"/a_tot.dat");
+  file_b.open(CalibrationFile+"/b_tot.dat");
+  file_c.open(CalibrationFile+"/c_tot.dat");
+  file_t.open(CalibrationFile+"/t_tot.dat");
+
+  for(int i=0;i<nPixX;i++)
+    {
+      SurrogateA[i] = new G4double[nPixY];
+      SurrogateB[i] = new G4double[nPixY];
+      SurrogateC[i] = new G4double[nPixY];
+      SurrogateT[i] = new G4double[nPixY];
+
+      for (int j=0; j<nPixY; ++j)
+	{
+	  file_a >> SurrogateA[i][j];
+	  file_b >> SurrogateB[i][j];
+	  file_c >> SurrogateC[i][j];
+	  file_t >> SurrogateT[i][j];
+	}
+    }
+
+  file_a.close();
+  file_b.close();
+  file_c.close();
+  file_t.close();
+}
+
+G4int AllPixTMPXDigitizer::energyToTOT(G4double energy, G4double a, G4double b, G4double c, G4double t)
+{
+  return a*(energy)/keV+b-c/((energy/keV)-t);
 }

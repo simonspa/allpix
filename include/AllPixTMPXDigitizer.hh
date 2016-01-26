@@ -19,8 +19,10 @@
 #include <map>
 #include <vector>
 
-#include "TFile.h" //calibration
-#include "TTree.h" //calibration
+//#include "TFile.h" //calibration
+//#include "TTree.h" //calibration
+#include <fstream> 
+#include <iostream>
 
 using namespace std;
 
@@ -38,6 +40,8 @@ public:
   void Digitize ();
   void SetDetectorDigitInputs(G4double){};
   G4double IntegrateGaussian(G4double xhit, G4double yhit, G4double Sigma, G4double x1, G4double x2, G4double y1, G4double y2, G4double Energy);
+  void ReadCalibrationFile();
+  G4int energyToTOT(G4double energy, G4double a, G4double b, G4double c, G4double t);
 private:
 
   class MC_content
@@ -70,7 +74,7 @@ private:
   //nalipour
   Double_t resistivity;
   Double_t V_B;
-  G4String SensorType; // p-in-n or n-in-p
+  G4String sensorType; // p-in-n or n-in-p
   G4String CalibrationFile;
   Double_t Threshold;
 
@@ -78,9 +82,7 @@ private:
   G4double **SurrogateA;
   G4double **SurrogateB;
   G4double **SurrogateC;
-  G4double **SurrogateD;
-  G4int size_calibX;
-  G4int size_calibY;
+  G4double **SurrogateT;
 
 
   //Charge sharing parameters
@@ -110,8 +112,7 @@ private:
   G4double diffusion_const;
   G4double V_D;
   G4double depletionWidth;
-
-  void initialise_calibrationMatrices(int size_calibX, int size_calibY);
+  Double_t temperature=300; //[K]
   
 };
 
