@@ -158,6 +158,8 @@ def convertRun( inputTarFile, outputFileName ):
 
         # parse input file
         telescopeData, DUTData = parseFrameFile( eventFile )
+        if (len(telescopeData)<6):
+            continue
 
         # is there DUT data?
         containsDUT = False
@@ -210,7 +212,7 @@ def convertRun( inputTarFile, outputFileName ):
                 idEncoder_DUT.reset()
                 #idEncoder_DUT['sensorID'] = int( sensorID ) - 500 + 6 # cannot fit 500 in 5 bits!! FIXME
                 idEncoder_DUT['sensorID'] = i+6 # cannot fit 500 in 5 bits!! FIXME
-                idEncoder_DUT['sparsePixelType'] = 1
+                idEncoder_DUT['sparsePixelType'] = 4
                 idEncoder_DUT.setCellID( planeData )
             
                 chargeVec = std.vector(float)()
@@ -232,7 +234,7 @@ def convertRun( inputTarFile, outputFileName ):
 
             idEncoder_Telescope.reset()
             idEncoder_Telescope['sensorID'] = int( sensorID ) - 300 # cannot fit 300 in 5 bits!! FIXME
-            idEncoder_Telescope['sparsePixelType'] = 1
+            idEncoder_Telescope['sparsePixelType'] = 4
             idEncoder_Telescope.setCellID( planeData )
             
             # loop over hits
@@ -244,7 +246,8 @@ def convertRun( inputTarFile, outputFileName ):
 
             trackerDataColl.addElement( planeData )
 
-        event.addCollection( trackerDataColl, 'zsdata_m26' )
+        event.addCollection( trackerDataColl, 'TPX3' )
+        #event.addCollection( trackerDataColl, 'zsdata_m26' )
 
         writer.writeEvent( event )
     
