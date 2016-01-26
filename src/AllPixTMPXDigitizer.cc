@@ -36,6 +36,13 @@ AllPixTMPXDigitizer::AllPixTMPXDigitizer(G4String modName, G4String hitsColName,
   pitchY=gD->GetPixelY();
   nPixX=gD->GetNPixelsX();
   nPixY=gD->GetNPixelsY();
+  V_B=gD->GetBiasVoltage();
+  V_D=gD->GetDepletionVoltage();
+  SensorType=gD->GetSensorType();
+  Threshold=gD->GetThreshold();
+
+
+  G4cout << "V_B=" << V_B << ", V_D=" << V_D << ", SensorType=" << SensorType << ", Threhsold=" << Threshold << G4endl;
   
 
 //G4cout << "nalipour detector thickness=" << thickness << G4endl;
@@ -86,7 +93,7 @@ void AllPixTMPXDigitizer::Digitize()
   //// ============PARAMETERS TO ADJUST================
   string sensorType="n-in-p"; // or n-in-p
   //Double_t V_B=35; //[V] //Run 1189
-  V_B=35; //[V] //Run 2302 Vb=-35[V]
+  //V_B=35; //[V] //Run 2302 Vb=-35[V]
 
   //-------L04-W0125-------// //100um p-in-n
   //G4double a=14.2;
@@ -98,8 +105,8 @@ void AllPixTMPXDigitizer::Digitize()
   //B06: dopant conc.=9.88e11                                                                                                                                                        
   TString carrier_type="n";
   TString bulk_type="p";
-  //Double_t nDopants=9.88e11;
-  V_D=30.31;
+  // Double_t nDopants=9.88e11;
+  // V_D=30.31;
   Double_t temperature=300; //[K]
 
   G4double a=29.8;

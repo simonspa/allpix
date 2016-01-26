@@ -31,6 +31,10 @@ public:
 	G4int GetNPixelsZ(){return m_npix_z;};
 	G4int GetNPixelsTotXY(){return GetNPixelsX()*GetNPixelsY();}; // Planar layout //
 	G4double GetResistivity(){return m_resistivity;};
+  G4double GetBiasVoltage(){return m_BiasVoltage;}; 
+  G4double GetDepletionVoltage(){return m_DepletionVoltage;}; 
+  G4String GetSensorType(){return m_SensorType;};
+  G4String GetCalibrationFile(){return m_CalibrationFile;};
 
 	//G4int GetHalfNPixelsX(){return GetNPixelsX()/2;}; // half number of pixels //
 	//G4int GetHalfNPixelsY(){return GetNPixelsY()/2;};
@@ -248,6 +252,18 @@ public:
 	void SetResistivity(G4double val){
 		m_resistivity = val;
 	}
+  void SetBiasVoltage(G4double val){
+		m_BiasVoltage = val;
+	}
+  void SetDepletionVoltage(G4double val){
+		m_DepletionVoltage = val;
+	}
+  void SetSensorType(G4String val){
+    m_SensorType = val;
+  }
+  void SetCalibrationFile(G4String val){
+    m_CalibrationFile = val;
+  }
 	void SetMIPTot(G4int val){
 		m_MIP_Tot = val;
 	}	
@@ -354,6 +370,10 @@ private:
 	G4double m_WaferYpos;
 
 	G4double m_resistivity;
+  G4double m_BiasVoltage; 
+  G4double m_DepletionVoltage;
+  G4String m_SensorType; 
+  G4String m_CalibrationFile;
 	
 	G4int m_MIP_Tot;
 	G4double m_MIP_Charge;	

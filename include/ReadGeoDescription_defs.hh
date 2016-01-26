@@ -69,5 +69,9 @@
 #define __Cross_Talk_S "Cross_Talk"
 #define __Saturation_Energy_S "Saturation_Energy"
 
+#define __Bias_Voltage "Bias_Voltage" 
+#define __Depletion_Voltage "Depletion_Voltage" 
+#define __Sensor_Type "Sensor_Type"
+#define __Calibration_File "Calibration_File"
 
 
