@@ -25,11 +25,9 @@ AllPixTMPXDigitizer::AllPixTMPXDigitizer(G4String modName, G4String hitsColName,
   collectionName.push_back(digitColName);
   m_hitsColName.push_back(hitsColName);
 
-  // threshold
-  //m_digitIn.thl = 1026;// For L04-W0125 //800 electrons // TO DO from gear file
-  m_digitIn.thl = 900;  
 
   //Geometry description
+  this->elec=3.6*eV;
   AllPixGeoDsc * gD = GetDetectorGeoDscPtr();
   thickness=gD->GetSensorZ(); //thickness[mm] 
   pitchX=gD->GetPixelX();
@@ -39,15 +37,13 @@ AllPixTMPXDigitizer::AllPixTMPXDigitizer(G4String modName, G4String hitsColName,
   V_B=gD->GetBiasVoltage();
   V_D=gD->GetDepletionVoltage();
   sensorType=gD->GetSensorType();
-  Threshold=gD->GetThreshold()*elec/keV;
+  Threshold=gD->GetThreshold()*this->elec/keV; // [keV]
   CalibrationFile=gD->GetCalibrationFile();
 
   ReadCalibrationFile();
 
   G4cout << "V_B=" << V_B << ", V_D=" << V_D << ", sensorType=" << sensorType << ", Threhsold=" << Threshold << G4endl;
-  
 
-//G4cout << "nalipour detector thickness=" << thickness << G4endl;
 }
 
 AllPixTMPXDigitizer::~AllPixTMPXDigitizer()
@@ -56,7 +52,7 @@ AllPixTMPXDigitizer::~AllPixTMPXDigitizer()
 
 void AllPixTMPXDigitizer::Digitize()
 {
-  this->elec=3.64*eV;
+
   m_digitsCollection = new AllPixTMPXDigitsCollection("AllPixTMPXDigitizer", collectionName[0] );
 
   // get the digiManager
@@ -78,12 +74,9 @@ void AllPixTMPXDigitizer::Digitize()
   // nPixX=gD->GetNPixelsX();
   // nPixY=gD->GetNPixelsY();
 
-
-
-
   //Parameters for Charge sharing and TOT!!!!!!
   // BE careful
-//  epsilon = 11.8*8.854187817e-14; // [F/cm] -> F=As/V (silicon)
+  // epsilon = 11.8*8.854187817e-14; // [F/cm] -> F=As/V (silicon)
   echarge=1.60217646e-19; //[C=As]
   Default_Hole_Mobility=480.0; //[cm2/Vs] Hole mobility
   Default_Hole_D=12; //;// Hole diffusion [cm2/s]
@@ -92,35 +85,7 @@ void AllPixTMPXDigitizer::Digitize()
   Default_Electron_D=36; //;// Electron diffusion [cm2/s]
 
 
-  //// ============PARAMETERS TO ADJUST================
-  //string sensorType="n-in-p"; // or n-in-p
-  //Double_t V_B=35; //[V] //Run 1189
-  //V_B=35; //[V] //Run 2302 Vb=-35[V]
 
-  //-------L04-W0125-------// //100um p-in-n
-  //G4double a=14.2;
-  //G4double b=437.2;
-  //G4double c=1830;
-  //G4double t=-9.26e-7;
-  //-----------------------//
-  // //-------B06-W0125-------// //200um n-in-p
-  //B06: dopant conc.=9.88e11                                                                                                                                                        
-  TString carrier_type="n";
-  TString bulk_type="p";
-  // Double_t nDopants=9.88e11;
-  // V_D=30.31;
-
-
-  // G4double a=29.8;
-  // G4double b=534.1;
-  // G4double c=1817;
-  // G4double t=0.7;
-  // //-----------------------//
-
-  // resistivity=5000; //[ohm cm]
-  ///=================================================
-  //mobility_const=0.0;
-  //diffusion_const=0.0;
   if (sensorType=="p-in-n")
     {
       mobility_const=Default_Hole_Mobility;
@@ -141,8 +106,6 @@ void AllPixTMPXDigitizer::Digitize()
 
   for(G4int itr  = 0 ; itr < nEntries ; itr++)
     {
-      // G4cout << "=================itr: " << itr << G4endl;
-      //G4cout << "Thickness=" << thickness << G4endl;
       tempPixel.first  = (*hitsCollection)[itr]->GetPixelNbX();
       tempPixel.second = (*hitsCollection)[itr]->GetPixelNbY();
       
@@ -150,7 +113,7 @@ void AllPixTMPXDigitizer::Digitize()
       G4double ypos=(*hitsCollection)[itr]->GetPosWithRespectToPixel().y();
       G4double zpos=(*hitsCollection)[itr]->GetPosWithRespectToPixel().z()+thickness/2.0; // [mm]; zpos=thickness corresponds to the sensor side and zpos=0 corresponds to the pixel side
 
-      G4cout << "xpos=" << xpos << ", ypos=" << ypos << ", zpos=" << zpos << G4endl;
+      // G4cout << "xpos=" << xpos << ", ypos=" << ypos << ", zpos=" << zpos << G4endl;
 
       AvgPosX+=tempPixel.first*pitchX+xpos+pitchX/2.0;
       AvgPosY+=tempPixel.second*pitchY+ypos+pitchY/2.0;
@@ -223,6 +186,7 @@ void AllPixTMPXDigitizer::Digitize()
  
 
   //------------------ RECORD DIGITS ------------------//
+  // int test_counter=0;
   // With charge sharing
   map<pair<G4int, G4int>, G4double >::iterator pCItr = pixelsContent.begin();
   for( ; pCItr != pixelsContent.end() ; pCItr++)
@@ -243,8 +207,10 @@ void AllPixTMPXDigitizer::Digitize()
 
       
       //if(((*pCItr).second)/keV > threshold*elec/keV) // over threshold !
+      // G4cout << "Threshold=" << Threshold << G4endl;
       if(((*pCItr).second)/keV > Threshold) // over threshold !
 	{
+	  // test_counter++;
 	  // G4cout << "yes" << G4endl;
 	  tempPixel.first=(*pCItr).first.first;
 	  tempPixel.second=(*pCItr).first.second;
@@ -260,8 +226,11 @@ void AllPixTMPXDigitizer::Digitize()
 	  digit->Set_posY_WithRespectoToPixel(AvgPosY/nEntries);
 	  //===================================================//
 
+	  // G4cout << "Energy=" << ((*pCItr).second)/keV << " [keV]" << G4endl;
+	  // G4cout << "Energy=" << ((*pCItr).second)/this->elec << " [electrons]" << G4endl;
+	  G4int TOT=energyToTOT(((*pCItr).second)/this->elec, SurrogateA[tempPixel.first][tempPixel.second], SurrogateB[tempPixel.first][tempPixel.second], SurrogateC[tempPixel.first][tempPixel.second], SurrogateT[tempPixel.first][tempPixel.second]);
 
-	  G4int TOT=energyToTOT(((*pCItr).second), SurrogateA[tempPixel.first][tempPixel.second], SurrogateB[tempPixel.first][tempPixel.second], SurrogateC[tempPixel.first][tempPixel.second], SurrogateT[tempPixel.first][tempPixel.second]);
+	  // G4cout << "Energy=" << ((*pCItr).second)/keV << "[keV]" << ", Energy=" << ((*pCItr).second)/this->elec << " [electrons]" << ", TOT=" << TOT << G4endl;
 
 	  //TOT=a*((*pCItr).second)/keV+b-c/(((*pCItr).second/keV)-t);
 	  digit->SetPixelCounts(TOT); //TOT value
@@ -269,6 +238,9 @@ void AllPixTMPXDigitizer::Digitize()
 	  m_digitsCollection->insert(digit);
 	}
     }
+
+  // G4cout << "Cluster size=" << test_counter << G4endl;
+
 
   G4int dc_entries = m_digitsCollection->entries();
   if(dc_entries > 0){
@@ -298,6 +270,8 @@ void AllPixTMPXDigitizer::ReadCalibrationFile()
   SurrogateC = new G4double*[nPixX];
   SurrogateT = new G4double*[nPixX];
 
+  G4cout << "Calibration file=" << CalibrationFile+"/a_tot.dat" << G4endl;
+
   std::ifstream file_a, file_b, file_c, file_t;
   file_a.open(CalibrationFile+"/a_tot.dat");
   file_b.open(CalibrationFile+"/b_tot.dat");
@@ -317,6 +291,8 @@ void AllPixTMPXDigitizer::ReadCalibrationFile()
 	  file_b >> SurrogateB[i][j];
 	  file_c >> SurrogateC[i][j];
 	  file_t >> SurrogateT[i][j];
+
+	  // G4cout << "a=" << SurrogateA[i][j] << ", b=" << SurrogateB[i][j] << ", c=" << SurrogateC[i][j] << ", t=" << SurrogateT[i][j] << G4endl;
 	}
     }
 
@@ -328,5 +304,6 @@ void AllPixTMPXDigitizer::ReadCalibrationFile()
 
 G4int AllPixTMPXDigitizer::energyToTOT(G4double energy, G4double a, G4double b, G4double c, G4double t)
 {
-  return a*(energy)/keV+b-c/((energy/keV)-t);
+  // G4cout << "a=" << a << ", b=" << b << ", c=" << c << ", t=" << t << G4endl;
+  return a*(energy)+b-c/((energy)-t);
 }

@@ -68,6 +68,7 @@ def parseFrameFile( inputFile ):
                 telescopeData[sensorID].append( x )
                 telescopeData[sensorID].append( y )
                 telescopeData[sensorID].append( e )
+                telescopeData[sensorID].append( 0 )
 
                 telescopeTestDict[sensorID] += 1
 
@@ -76,6 +77,7 @@ def parseFrameFile( inputFile ):
                 DUTData[sensorID].append( x )
                 DUTData[sensorID].append( y )
                 DUTData[sensorID].append( e )
+                DUTData[sensorID].append( 0 )
 
                 telescopeTestDict[sensorID] += 1
 
@@ -212,7 +214,7 @@ def convertRun( inputTarFile, outputFileName ):
                 idEncoder_DUT.reset()
                 #idEncoder_DUT['sensorID'] = int( sensorID ) - 500 + 6 # cannot fit 500 in 5 bits!! FIXME
                 idEncoder_DUT['sensorID'] = i+6 # cannot fit 500 in 5 bits!! FIXME
-                idEncoder_DUT['sparsePixelType'] = 4
+                idEncoder_DUT['sparsePixelType'] = 2
                 idEncoder_DUT.setCellID( planeData )
             
                 chargeVec = std.vector(float)()
@@ -234,7 +236,7 @@ def convertRun( inputTarFile, outputFileName ):
 
             idEncoder_Telescope.reset()
             idEncoder_Telescope['sensorID'] = int( sensorID ) - 300 # cannot fit 300 in 5 bits!! FIXME
-            idEncoder_Telescope['sparsePixelType'] = 4
+            idEncoder_Telescope['sparsePixelType'] = 2
             idEncoder_Telescope.setCellID( planeData )
             
             # loop over hits
