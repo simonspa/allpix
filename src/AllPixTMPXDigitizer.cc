@@ -52,7 +52,7 @@ AllPixTMPXDigitizer::~AllPixTMPXDigitizer()
 
 void AllPixTMPXDigitizer::Digitize()
 {
-
+  // G4cout << "************* nalipour: TMPX digitizer" << G4endl;
   m_digitsCollection = new AllPixTMPXDigitsCollection("AllPixTMPXDigitizer", collectionName[0] );
 
   // get the digiManager
@@ -106,6 +106,7 @@ void AllPixTMPXDigitizer::Digitize()
 
   for(G4int itr  = 0 ; itr < nEntries ; itr++)
     {
+      // G4cout << "itr=" << itr << G4endl;
       tempPixel.first  = (*hitsCollection)[itr]->GetPixelNbX();
       tempPixel.second = (*hitsCollection)[itr]->GetPixelNbY();
       
@@ -126,7 +127,8 @@ void AllPixTMPXDigitizer::Digitize()
       extraPixel = tempPixel;
       G4double hit_energy=(*hitsCollection)[itr]->GetEdep();
       
-      
+      G4cout << "****** depletionWidth=" << depletionWidth << G4endl;
+      // G4cout << "zpos=" << zpos << G4endl;
       if(zpos<depletionWidth && zpos>=0) // Only charge sharing for the depletion region //depletionWidth*10 [mm]
       	{
 	  // zpos=TMath::Abs(zpos); // sometimes zpos=-1.38778e-17 -> Due to the step size
@@ -139,9 +141,10 @@ void AllPixTMPXDigitizer::Digitize()
 	  //  G4cout << "diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
 
 	  // ======= Non-linear ======= //
+	  //G4cout << "temperature=" << temperature << ", k=" << TMath::K() << G4endl;
 	  Double_t diffusion_RMS=TMath::Sqrt((TMath::K()*temperature*(thickness/cm)*(thickness/cm)/(echarge*V_D))*TMath::Log((V_B+V_D)/(V_B+V_D-2.0*V_D*(zpos/cm)/(thickness/cm))));
 	  diffusion_RMS=TMath::Sqrt(2)*diffusion_RMS*10;//[mm]
-	  // G4cout << "diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
+	  G4cout << "***********zpos=" << zpos << ", diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
   
 	  
 	  for(int i=-1; i<=1; i++)
@@ -153,6 +156,7 @@ void AllPixTMPXDigitizer::Digitize()
 		  extraPixel.second+=j;
 		  if(extraPixel.first >= 0 && extraPixel.second>=0 && extraPixel.first < nPixX && extraPixel.second < nPixY)
 		    {		      
+		      // G4cout << "i=" << i << ", j=" << j << G4endl;
 		      G4double Etemp = IntegrateGaussian(xpos/nm, ypos/nm, diffusion_RMS/nm, (-pitchX/2.0 + i*pitchX)/nm, (-pitchX/2.+(i+1)*pitchX)/nm, (-pitchY/2 + j*pitchY)/nm, (-pitchY/2+(j+1)*pitchY)/nm, hit_energy);
 		      pixelsContent[extraPixel]+=Etemp;
 		    }
@@ -257,6 +261,7 @@ void AllPixTMPXDigitizer::Digitize()
  G4double AllPixTMPXDigitizer::IntegrateGaussian(G4double xhit,G4double yhit,G4double Sigma, G4double x1, G4double x2, G4double y1, G4double y2, G4double Energy)
  {
    G4double Integral=(-TMath::Erf((x1-xhit)/(TMath::Sqrt(2.)*Sigma))+TMath::Erf((x2-xhit)/(TMath::Sqrt(2.)*Sigma)))*(-TMath::Erf((y1-yhit)/(TMath::Sqrt(2.)*Sigma))+TMath::Erf((y2-yhit)/(TMath::Sqrt(2.0)*Sigma)));
+   // G4cout << "Integral=" << Integral/4.0 << G4endl;
 
    G4double energybis=Integral*Energy/4.0; //*(TMath::Pi())*(TMath::Pi());
    return energybis;
