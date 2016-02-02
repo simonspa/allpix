@@ -127,7 +127,7 @@ void AllPixTMPXDigitizer::Digitize()
       extraPixel = tempPixel;
       G4double hit_energy=(*hitsCollection)[itr]->GetEdep();
       
-      G4cout << "****** depletionWidth=" << depletionWidth << G4endl;
+      // G4cout << "****** depletionWidth=" << depletionWidth << G4endl;
       // G4cout << "zpos=" << zpos << G4endl;
       if(zpos<depletionWidth && zpos>=0) // Only charge sharing for the depletion region //depletionWidth*10 [mm]
       	{
@@ -141,11 +141,12 @@ void AllPixTMPXDigitizer::Digitize()
 	  //  G4cout << "diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
 
 	  // ======= Non-linear ======= //
-	  //G4cout << "temperature=" << temperature << ", k=" << TMath::K() << G4endl;
-	  Double_t diffusion_RMS=TMath::Sqrt((TMath::K()*temperature*(thickness/cm)*(thickness/cm)/(echarge*V_D))*TMath::Log((V_B+V_D)/(V_B+V_D-2.0*V_D*(zpos/cm)/(thickness/cm))));
-	  diffusion_RMS=TMath::Sqrt(2)*diffusion_RMS*10;//[mm]
-	  G4cout << "***********zpos=" << zpos << ", diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
-  
+
+	  Double_t diffusion_RMS=TMath::Sqrt((TMath::K()*temperature*(thickness/cm)*(thickness/cm)/(echarge*V_D))*TMath::Log((V_B+V_D)/TMath::Abs(V_B+V_D-2.0*V_D*(zpos/cm)/(thickness/cm))));
+	  // diffusion_RMS=TMath::Sqrt(2)*diffusion_RMS*10;//[mm]
+	  diffusion_RMS=diffusion_RMS*10;//[mm]
+	  //G4cout << "***********zpos=" << zpos << ", diffusion_RMS=" << diffusion_RMS << "[mm]" << G4endl;
+  	  // G4cout << "temperature=" << temperature << ", k=" << TMath::K() << ", echarge=" << echarge << ", thickness[cm]=" << thickness/cm << ", V_B=" << V_B << ", V_D=" << V_D << ", zpos=" << zpos << ", diffusion=" << diffusion_RMS << G4endl;
 	  
 	  for(int i=-1; i<=1; i++)
 	    {
