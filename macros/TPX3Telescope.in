@@ -1,7 +1,7 @@
 ####################################################################
 #### DUT #### 
 ####################################################################
-/allpix/det/setId        50
+/allpix/det/setId        100
 /allpix/det/setPosition  0.0 0.0 77.0 mm
 /allpix/det/setRotation  0.0 180.0 180.0 deg
 
@@ -77,26 +77,26 @@
 /allpix/phys/verbose 0
 
 ####################################################################
-# Visualization
-/vis/scene/create
-#/vis/scene/add/axes 0. 0. 0. 10. cm
-/vis/scene/add/volume World -1 2
-/vis/viewer/set/style s
-/vis/open OIX 1024x768-100+100
-#/vis/open OGLIXm 1024x768-100+100
-#/vis/open RayTracer
-#/vis/open OGLIQt
-#/vis/open OGLSQt
-#/vis/open OIX
-#/vis/open OGLIX 1024x768-100+100
-#/vis/open OGLSXm
-#/vis/open DAWNFILE
-#/vis/open OGLSX
-#/vis/open OGL 600x600-0+0
-/vis/viewer/set/background 0.4 0.5 0.6
-/vis/viewer/set/viewpointThetaPhi 20 50
-/vis/viewer/zoom 2.0
-/vis/viewer/flush
+# # Visualization
+# /vis/scene/create
+# #/vis/scene/add/axes 0. 0. 0. 10. cm
+# /vis/scene/add/volume World -1 2
+# /vis/viewer/set/style s
+# /vis/open OIX 1024x768-100+100
+# #/vis/open OGLIXm 1024x768-100+100
+# #/vis/open RayTracer
+# #/vis/open OGLIQt
+# #/vis/open OGLSQt
+# #/vis/open OIX
+# #/vis/open OGLIX 1024x768-100+100
+# #/vis/open OGLSXm
+# #/vis/open DAWNFILE
+# #/vis/open OGLSX
+# #/vis/open OGL 600x600-0+0
+# /vis/viewer/set/background 0.4 0.5 0.6
+# /vis/viewer/set/viewpointThetaPhi 20 50
+# /vis/viewer/zoom 2.0
+# /vis/viewer/flush
 
 ####################################################################
 # Draw trajectories at end of event, showing trajectory points as
@@ -109,14 +109,14 @@
 
 ####################################################################
 # Write Telescope files
-/allpix/timepixtelescope/setFolderPath /scratch1/Timepix3Telescope/test1
+/allpix/timepixtelescope/setFolderPath /scratch1/Timepix3Telescope/run8
 /allpix/timepixtelescope/setEventIDcolumn 0
 /allpix/timepixtelescope/setSumTOT 1
-/allpix/timepixtelescope/write 0
+/allpix/timepixtelescope/write 1
 /allpix/config/setOutputPrefixWithPath TelescopeSim
 
-/allpix/WriteROOTFiles/write 0
-/allpix/WriteROOTFiles/setFolderPath /scratch1/Timepix3Telescope/test1
+/allpix/WriteROOTFiles/write 1
+/allpix/WriteROOTFiles/setFolderPath /scratch1/Timepix3Telescope/run8
 ####################################################################
 # # Source GPS
 /gps/particle pi+
@@ -150,6 +150,6 @@
 
 ####################################################################
 # Shoot
-/allpix/beam/frames 50000
+/allpix/beam/frames 20000
 /allpix/beam/type const 1
 /allpix/beam/on

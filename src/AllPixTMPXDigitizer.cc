@@ -116,8 +116,19 @@ void AllPixTMPXDigitizer::Digitize()
 
       // G4cout << "xpos=" << xpos << ", ypos=" << ypos << ", zpos=" << zpos << G4endl;
 
-      AvgPosX+=tempPixel.first*pitchX+xpos+pitchX/2.0;
-      AvgPosY+=tempPixel.second*pitchY+ypos+pitchY/2.0;
+      // AvgPosX+=tempPixel.first*pitchX+xpos+pitchX/2.0;
+      // AvgPosY+=tempPixel.second*pitchY+ypos+pitchY/2.0;
+
+      // if (TMath::Abs(zpos-thickness)<0.002)
+      if (TMath::Abs(zpos-thickness/2.0)<0.002)
+	{
+	  AvgPosX=tempPixel.first*pitchX+xpos+pitchX/2.0;
+	  AvgPosY=tempPixel.second*pitchY+ypos+pitchY/2.0;
+	  // G4cout << "zpos=" << zpos << ", x=" << AvgPosX << ", y=" << AvgPosY << G4endl;
+	}
+
+      // G4cout << "itr=" << itr << ", xpos=" << tempPixel.first*pitchX+xpos+pitchX/2.0 << ", ypos=" << tempPixel.second*pitchY+ypos+pitchY/2.0 << ", zpos=" << zpos << G4endl;
+      // G4cout << "thickness=" << thickness << G4endl;
       
       depletionWidth=(thickness/(2*V_D))*(V_D+V_B)-2e-3; //TMath::Sqrt(V_B/V_D)*thickness; //[cm]
       // G4cout << "test depletionWidth=" << (thickness/(2*V_D))*(V_D+V_B) << "[mm]" << G4endl; 
@@ -202,8 +213,13 @@ void AllPixTMPXDigitizer::Digitize()
       // G4cout << "threshold=" << threshold << G4endl;
       // G4cout << "energy=" << ((*pCItr).second)/keV << " [keV]" << G4endl;
       // //--- Electronic noise ---//
-      // Double_t electronic_noise=elec*CLHEP::RandGauss::shoot(0, 200)/MeV;  //200 electrons electronic noise
-      // ((*pCItr).second)+=electronic_noise;
+      Double_t electronic_noise=elec*CLHEP::RandGauss::shoot(0, 90)/MeV;  //90 electrons electronic noise
+      // G4cout << "electronic_noise=" << electronic_noise/keV << "[keV]"  << G4endl;
+      // G4cout << "signal=" << ((*pCItr).second)/keV << "[keV]"  << G4endl;
+      
+      ((*pCItr).second)+=electronic_noise;
+
+      // G4cout << "signal after noise=" << ((*pCItr).second)/keV << "[keV]"  << G4endl;
 
       // // // TOT noise
       // // ((*pCItr).second)=CLHEP::RandGauss::shoot(((*pCItr).second), 5.0/100.0*((*pCItr).second)); //?????
@@ -227,8 +243,8 @@ void AllPixTMPXDigitizer::Digitize()
 	  digit->SetPixelEnergyDep(((*pCItr).second)/keV); //Energy with charge sharing
 
 	  // ====== TO be corrected later==================== //
-	  digit->Set_posX_WithRespectoToPixel(AvgPosX/nEntries);
-	  digit->Set_posY_WithRespectoToPixel(AvgPosY/nEntries);
+	  digit->Set_posX_WithRespectoToPixel(AvgPosX);// /nEntries);
+	  digit->Set_posY_WithRespectoToPixel(AvgPosY); // /nEntries);
 	  //===================================================//
 
 	  // G4cout << "Energy=" << ((*pCItr).second)/keV << " [keV]" << G4endl;
@@ -236,11 +252,18 @@ void AllPixTMPXDigitizer::Digitize()
 	  G4int TOT=energyToTOT(((*pCItr).second)/this->elec, SurrogateA[tempPixel.first][tempPixel.second], SurrogateB[tempPixel.first][tempPixel.second], SurrogateC[tempPixel.first][tempPixel.second], SurrogateT[tempPixel.first][tempPixel.second]);
 
 	  // G4cout << "Energy=" << ((*pCItr).second)/keV << "[keV]" << ", Energy=" << ((*pCItr).second)/this->elec << " [electrons]" << ", TOT=" << TOT << G4endl;
-
 	  //TOT=a*((*pCItr).second)/keV+b-c/(((*pCItr).second/keV)-t);
-	  digit->SetPixelCounts(TOT); //TOT value
 
-	  m_digitsCollection->insert(digit);
+	  if (TOT>0)
+	    {
+	      digit->SetPixelCounts(TOT); //TOT value
+	      m_digitsCollection->insert(digit);
+	    }
+
+	  if (TOT<=0)
+	    {
+	      G4cout << "TOT zero: energy=" << ((*pCItr).second)/keV << " [keV], TOT=" << TOT << G4endl;
+	    }
 	}
     }
 
@@ -248,12 +271,13 @@ void AllPixTMPXDigitizer::Digitize()
 
 
   G4int dc_entries = m_digitsCollection->entries();
-  if(dc_entries > 0){
-    G4cout << "--------> Digits Collection : " << collectionName[0]
-	   << "(" << m_hitsColName[0] << ")"
-	   << " contains " << dc_entries
-	   << " digits" << G4endl;
-  }
+  if(dc_entries > 0)
+    {
+      G4cout << "--------> Digits Collection : " << collectionName[0]
+	     << "(" << m_hitsColName[0] << ")"
+	     << " contains " << dc_entries
+	     << " digits" << G4endl;
+    }
 
   StoreDigiCollection(m_digitsCollection);
 }
