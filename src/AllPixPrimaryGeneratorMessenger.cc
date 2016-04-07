@@ -161,6 +161,19 @@ AllPixPrimaryGeneratorMessenger::AllPixPrimaryGeneratorMessenger(
   m_Write_MC_FolderNameCmd->SetDefaultValue("./");
   m_Write_MC_FolderNameCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
+  //nurnberg: SPIDR hits
+  m_Write_SPIDR_FilesCmd = new G4UIcmdWithABool("/allpix/WriteSPIDRFiles/write",this);
+  m_Write_SPIDR_FilesCmd->SetGuidance("Switch on/off writing SPIDR files containing the AllPix information. Default OFF.");
+  m_Write_SPIDR_FilesCmd->SetDefaultValue(false);
+  m_Write_SPIDR_FilesCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
+  m_Write_SPIDR_FolderNameCmd = new G4UIcmdWithAString("/allpix/WriteSPIDRFiles/setFolderPath",this);;
+  m_Write_SPIDR_FolderNameCmd->SetGuidance("Set folder path for the SPIDR Files containing hit information.");
+  m_Write_SPIDR_FolderNameCmd->SetGuidance("Directory structure will be created if it does not exist.");
+  m_Write_SPIDR_FolderNameCmd->SetGuidance("Default is ./");
+  m_Write_SPIDR_FolderNameCmd->SetDefaultValue("./");
+  m_Write_SPIDR_FolderNameCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -298,6 +311,24 @@ void AllPixPrimaryGeneratorMessenger::SetNewValue(
 	  system(TString::Format("mkdir -p %s",m_Write_MC_FolderName.data()));
 	}
     }
+
+  //nurnberg: SPIDR hits
+	if (command == m_Write_SPIDR_FilesCmd)
+	{
+		m_Write_SPIDR_FilesFlag = m_Write_SPIDR_FilesCmd->GetNewBoolValue(newValue);		
+	}
+	if (command == m_Write_SPIDR_FolderNameCmd)
+	{
+		m_Write_SPIDR_FolderName = newValue;
+
+		// check if folder exists, otherwise create it
+		struct stat st;
+		if ( stat(m_Write_SPIDR_FolderName,&st) != 0 )
+		{
+			G4cout << "folder " <<m_Write_SPIDR_FolderName  << " does not exist, creating..." << G4endl;
+			system(TString::Format("mkdir -p %s",m_Write_SPIDR_FolderName.data()));
+		}
+	}
   
 }
 

@@ -109,19 +109,22 @@
 
 ####################################################################
 # Write Telescope files
-/allpix/timepixtelescope/setFolderPath /scratch1/Timepix3Telescope/run8
+/allpix/timepixtelescope/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work
 /allpix/timepixtelescope/setEventIDcolumn 0
 /allpix/timepixtelescope/setSumTOT 1
-/allpix/timepixtelescope/write 1
+/allpix/timepixtelescope/write 0
 /allpix/config/setOutputPrefixWithPath TelescopeSim
 
-/allpix/WriteROOTFiles/write 1
-/allpix/WriteROOTFiles/setFolderPath /scratch1/Timepix3Telescope/run8
+/allpix/WriteROOTFiles/write 0
+/allpix/WriteROOTFiles/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work
+
+/allpix/WriteSPIDRFiles/write 1
+/allpix/WriteSPIDRFiles/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work
 ####################################################################
 # # Source GPS
 /gps/particle pi+
 /gps/pos/type Beam
-/gps/pos/sigma_r 5.0 mm
+/gps/pos/sigma_r 0.5 mm
 /gps/pos/centre 0.0 0.0 -100.0 mm
 /gps/direction  0 0 1
 
@@ -150,6 +153,6 @@
 
 ####################################################################
 # Shoot
-/allpix/beam/frames 20000
+/allpix/beam/frames 11000
 /allpix/beam/type const 1
 /allpix/beam/on

@@ -260,10 +260,10 @@ void AllPixTMPXDigitizer::Digitize()
 	      m_digitsCollection->insert(digit);
 	    }
 
-	  if (TOT<=0)
+	  /*if (TOT<=0)
 	    {
 	      G4cout << "TOT zero: energy=" << ((*pCItr).second)/keV << " [keV], TOT=" << TOT << G4endl;
-	    }
+	    }*/
 	}
     }
 
@@ -271,13 +271,13 @@ void AllPixTMPXDigitizer::Digitize()
 
 
   G4int dc_entries = m_digitsCollection->entries();
-  if(dc_entries > 0)
+ /* if(dc_entries > 0)
     {
       G4cout << "--------> Digits Collection : " << collectionName[0]
 	     << "(" << m_hitsColName[0] << ")"
 	     << " contains " << dc_entries
 	     << " digits" << G4endl;
-    }
+    }*/
 
   StoreDigiCollection(m_digitsCollection);
 }

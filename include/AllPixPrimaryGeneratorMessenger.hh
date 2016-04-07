@@ -67,6 +67,10 @@ public:
   G4bool GetWrite_MC_FilesFlag() {return this->m_Write_MC_FilesFlag;} 
   G4String GetWrite_MC_FolderName()  {return this->m_Write_MC_FolderName;}
 
+  //Write SPIDR hits (nurnberg)
+  G4bool GetWrite_SPIDR_FilesFlag() {return this->m_Write_SPIDR_FilesFlag;} 
+  G4String GetWrite_SPIDR_FolderName()  {return this->m_Write_SPIDR_FolderName;}
+
   void SetNewValue(G4UIcommand*, G4String);
 
 private:
@@ -99,6 +103,12 @@ private:
   G4UIcmdWithAString * m_Write_MC_FolderNameCmd;
   G4bool m_Write_MC_FilesFlag;
   G4String m_Write_MC_FolderName;
+
+  //nurnberg: SPIDR hits
+  G4UIcmdWithABool   * m_Write_SPIDR_FilesCmd;
+  G4UIcmdWithAString * m_Write_SPIDR_FolderNameCmd;
+  G4bool m_Write_SPIDR_FilesFlag;
+  G4String m_Write_SPIDR_FolderName;
 
 };
 

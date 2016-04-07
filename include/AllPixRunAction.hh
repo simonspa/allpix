@@ -107,6 +107,7 @@ private:
 
   G4bool m_writeTPixTelescopeFilesFlag;
   G4bool m_writeMCROOTFilesFlag; //nalipour: Flag to write MC hits in a ROOT file
+  G4bool m_writeSPIDRFilesFlag; //nurnberg: Flag to write SPIDR files
 
 };
 

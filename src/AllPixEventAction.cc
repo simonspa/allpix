@@ -8,6 +8,7 @@
 #include "G4PrimaryVertex.hh"
 #include "AllPixMimosa26Digitizer.hh"
 #include "AllPixFEI3StandardDigitizer.hh"
+#include "G4EventManager.hh"
 
 // geometry
 #include "ReadGeoDescription.hh"
@@ -76,7 +77,7 @@ void AllPixEventAction::EndOfEventAction(const G4Event * evt)
 	}
 
 	// digits will be retrieved at the end of the event in AllPixRun.
-
+	G4EventManager::GetEventManager()->KeepTheCurrentEvent();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

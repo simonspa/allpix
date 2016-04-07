@@ -55,8 +55,68 @@
 <Depletion_Voltage>30.0</Depletion_Voltage>
 <Sensor_Type>p-in-n</Sensor_Type>
 <Chip_Threshold> 1000. </Chip_Threshold>
-<Calibration_File>/afs/cern.ch/work/n/nalipour/Allpix_Jan2016/allpix/calibrationFiles/TelescopeCalib/cal_thr_dac_1210/</Calibration_File>
+<Calibration_File>/afs/cern.ch/work/n/nurnberg/clic/allpix_work/calib/telescope/cal_thr_1210_ik_10_charge/</Calibration_File>
 
+</pixeldet>
+
+<!-- 100 um sensor-->
+<pixeldet id="101">
+  <digitizer>TMPX</digitizer>
+  
+  <npix_x>8</npix_x>
+  <npix_y>8</npix_y>
+  <npix_z>0</npix_z>
+  
+  <pixsize_x units="um">50</pixsize_x>
+  <pixsize_y units="um">50</pixsize_y>
+  <pixsize_z units="um">50.</pixsize_z>
+  
+  <chip_hx units="um">400</chip_hx>
+  <chip_hy units="um">400</chip_hy>
+  <chip_hz units="um">375.0</chip_hz>
+  
+  <chip_offsetx units="um">0.</chip_offsetx>
+  <chip_offsety units="um">-1020.</chip_offsety>
+  <chip_offsetz units="um">0.</chip_offsetz>
+  
+  <sensor_hx units="um">400.</sensor_hx>
+  <sensor_hy units="um">400.</sensor_hy>
+  <sensor_hz units="um">50.0</sensor_hz>
+  
+  <sensor_gr_excess_htop units="um">50.0</sensor_gr_excess_htop>
+  <sensor_gr_excess_hbottom units="um">50.0</sensor_gr_excess_hbottom>
+  <sensor_gr_excess_hright units="um">50.0</sensor_gr_excess_hright>
+  <sensor_gr_excess_hleft units="um">50.0</sensor_gr_excess_hleft>
+  
+  <sensor_posx units="mm">0</sensor_posx>
+  <sensor_posy units="mm">22.25</sensor_posy>
+  <sensor_posz units="mm">0.</sensor_posz>
+  
+  
+  <bump_radius units="um">7.0</bump_radius>
+  <bump_height units="um">16.0</bump_height>
+  <bump_offset_x units="um">0.0</bump_offset_x>
+  <bump_offset_y units="um">0.0</bump_offset_y>
+  <bump_dr units="um">1.0</bump_dr>
+  
+  
+  <pcb_hx units="mm">23.50</pcb_hx>
+  <pcb_hy units="mm">39.5</pcb_hy>
+  <pcb_hz units="mm">0.88</pcb_hz>
+  
+  <Bias_Voltage>20.0</Bias_Voltage>
+  <Depletion_Voltage>10.0</Depletion_Voltage>
+  <Sensor_Type>n-in-p</Sensor_Type>
+
+  <Chip_Threshold> 510. </Chip_Threshold>
+  <Calibration_File>/afs/cern.ch/work/n/nurnberg/clic/allpix_work/calib/W0005_E02/cal_thr_dac_1160/</Calibration_File>
+
+  <!-- <Chip_Threshold> 826. </Chip_Threshold> -->
+  <!-- <Calibration_File>/afs/cern.ch/work/n/nalipour/Allpix_Jan2016/allpix/calibrationFiles/W0005_E02/cal_thr_dac_1190/</Calibration_File> -->
+
+  <!-- <Chip_Threshold> 1037. </Chip_Threshold> -->
+  <!-- <Calibration_File>/afs/cern.ch/work/n/nalipour/Allpix_Jan2016/allpix/calibrationFiles/W0005_E02/cal_thr_dac_1210/</Calibration_File> -->
+  
 </pixeldet>
 
 <!-- 50 um sensor-->
@@ -110,7 +170,7 @@
 
 
 <Chip_Threshold> 554. </Chip_Threshold>
-<Calibration_File>/afs/cern.ch/work/n/nalipour/Allpix_Jan2016/allpix/calibrationFiles/W0019_C07/cal_thr_dac_1148/</Calibration_File>
+<Calibration_File>/afs/cern.ch/work/n/nurnberg/clic/allpix_work/calib/W0019_C07/cal_thr_1148_ik_10/</Calibration_File>
 
 </pixeldet>
 
@@ -165,7 +225,7 @@
   <Sensor_Type>n-in-p</Sensor_Type>
 
   <Chip_Threshold> 510. </Chip_Threshold>
-  <Calibration_File>/afs/cern.ch/work/n/nalipour/Allpix_Jan2016/allpix/calibrationFiles/W0005_E02/cal_thr_dac_1160/</Calibration_File>
+  <Calibration_File>/afs/cern.ch/work/n/nurnberg/clic/allpix_work/calib/W0005_E02/cal_thr_dac_1160/</Calibration_File>
 
   <!-- <Chip_Threshold> 826. </Chip_Threshold> -->
   <!-- <Calibration_File>/afs/cern.ch/work/n/nalipour/Allpix_Jan2016/allpix/calibrationFiles/W0005_E02/cal_thr_dac_1190/</Calibration_File> -->

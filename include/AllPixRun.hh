@@ -68,6 +68,8 @@ public:
   //void RecordHitsForROOTFiles_withChargeSharing(const G4Event* evt); // Hits with charge sharing values
   void RecordDigits_all(const G4Event* evt);
 
+  //nurnberg
+  void FillSPIDRFiles(const G4Event*); //fills the SPIDR files
 
 private:
 

@@ -89,6 +89,7 @@ G4Run * AllPixRunAction::GenerateRun(){
 	
   m_writeTPixTelescopeFilesFlag = AllPixMessenger->GetTimepixTelescopeWriteFlag(); //pass it to veto RecordTelescopeDigits
   m_writeMCROOTFilesFlag = AllPixMessenger->GetWrite_MC_FilesFlag(); // nalipour: Flag to write the ROOT file
+  m_writeSPIDRFilesFlag = AllPixMessenger->GetWrite_SPIDR_FilesFlag(); // nurnberg: Flag to write the SPIDR files
   
   m_AllPixRun = new AllPixRun(m_detectorPtr, m_detectorPtr->GetOutputFilePrefix(),
 			      m_dataset, m_tempdir, m_writeTPixTelescopeFilesFlag, m_writeMCROOTFilesFlag); // keep this pointer //nalipour: Add the flag for the ROOT files
@@ -103,7 +104,7 @@ G4Run * AllPixRunAction::GenerateRun(){
       writeROOTFile=new AllPixWriteROOTFile* [(int)geoMap->size()];
       for( detItr = geoMap->begin() ; detItr != geoMap->end() ; detItr++)
 	{
-	  G4cout << "nalipour ******" << (*detItr).first << G4endl;
+	  //G4cout << "nalipour ******" << (*detItr).first << G4endl;
 	  writeROOTFile[m_AllPixRun->return_detIdToIndex((*detItr).first)]=new AllPixWriteROOTFile((*detItr).first, AllPixMessenger->GetWrite_MC_FolderName());
 	}
     }
@@ -125,7 +126,7 @@ void AllPixRunAction::EndOfRunAction(const G4Run* aRun)
 {   
 
   // at the end of the run
-  G4cout << "Filling frames ntuple" << G4endl;
+  //G4cout << "Filling frames ntuple" << G4endl;
   m_AllPixRun->FillFramesNtuple(aRun);
 
   /*
@@ -139,7 +140,7 @@ void AllPixRunAction::EndOfRunAction(const G4Run* aRun)
   G4bool eventIDflag  = AllPixMessenger->GetTimepixTelescopeDoEventFlag();
   G4bool sumTOTflag   = AllPixMessenger->GetTimepixTelescopeSumTOTFlag();
   if (writeFlag) {
-    G4cout << "Filling telescope files" << G4endl;
+    //G4cout << "Filling telescope files" << G4endl;
     m_AllPixRun->FillTelescopeFiles(aRun,folderName,eventIDflag,sumTOTflag);
   }
 
@@ -147,9 +148,17 @@ void AllPixRunAction::EndOfRunAction(const G4Run* aRun)
     {
       m_AllPixRun->FillROOTFiles(writeROOTFile);
     }
+
+  if(m_writeSPIDRFilesFlag) //nurnberg: Fill SPIDR files
+    { 
+	  //G4cout << "Filling SPIDR files: " << aRun->GetEventVector()->size() << " events"<<G4endl;
+	  for (unsigned int ievt=0;ievt<aRun->GetEventVector()->size();ievt++)
+	  {
+		m_AllPixRun->FillSPIDRFiles(aRun->GetEventVector()->at(ievt));
+	  }
+    }
   timer->Stop();
-  G4cout << "event Id = " << aRun->GetNumberOfEvent()
-	 << " " << *timer << G4endl;
+  //G4cout << "event Id = " << aRun->GetNumberOfEvent() << " " << *timer << G4endl;
 
 }
 

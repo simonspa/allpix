@@ -22,6 +22,8 @@
 
 //
 #include "TString.h"
+#include <string>
+#include <fstream>
 #include <map>
 #include <time.h>
 
@@ -498,7 +500,7 @@ void AllPixRun::RecordEvent(const G4Event* evt) {
       //RecordHitsForROOTFiles(evt);
       //RecordHitsForROOTFiles_withChargeSharing(evt);
     }
-
+  
 }
 
 void AllPixRun::RecordHits(const G4Event* evt) {
@@ -841,7 +843,80 @@ void AllPixRun::RecordTelescopeDigits(const G4Event* evt){
 
 
 
+void AllPixRun::FillSPIDRFiles(const G4Event* evt) //nurnberg
+{
+	//G4cout<<"FillSpidrFiles"<<G4endl;
 
+	G4DCofThisEvent* DCe = evt->GetDCofThisEvent();
+	if(!DCe)
+	{
+		G4cout << "No digits in this event !" << G4endl;
+		return;
+	}
+	G4int nDC = DCe->GetNumberOfCollections();
+	if(m_nOfDetectors != nDC)
+	{
+		G4cout << "[ERROR] the number of Digit Collections should not" << G4endl
+		 << "        be found to be different than the number of" << G4endl
+		 << "        detectors. nDetectors = " << m_nOfDetectors << G4endl
+		 << "        nDC =  " << nDC <<  " ... Giving up." << G4endl;
+		exit(1);
+	}
+
+	std::vector<std::string> planes={"W0019_L08","W0013_D04","W0013_E03","W0013_G02","W0013_G03","W0013_J05","W0013_L09"};
+
+	for (G4int i = 0 ; i < nDC ; i++) {
+		std::ofstream outfile;
+		if(this->GetRunID()==0)	
+		{
+			outfile.open(planes[i]+"/"+planes[i]+".dat",std::ofstream::binary /*| std::ofstream::app*/);
+			unsigned long long int packet = 0x4400000000000000;
+			outfile.write(reinterpret_cast<const char *>(&packet),sizeof(packet));
+			packet = 0x4500000000000000;
+			outfile.write(reinterpret_cast<const char *>(&packet),sizeof(packet));
+		}
+		else
+		{
+			outfile.open(planes[i]+"/"+planes[i]+".dat",std::ofstream::binary | std::ofstream::app);
+		}
+		// Get a hit in the Collection directly
+		AllPixDigitsCollectionInterface * digitsCollection =
+		static_cast<AllPixDigitsCollectionInterface *> (DCe->GetDC(i));
+		G4int nDigits = digitsCollection->entries();
+		for (G4int itr  = 0 ; itr < nDigits ; itr++)
+		{
+			//G4cout << i << "\t"<<planes[i]<<"\t" << "\t" << (*digitsCollection)[itr]->GetPixelIDX() << "\t" << (*digitsCollection)[itr]->GetPixelIDY() << "\t" << (*digitsCollection)[itr]->GetPixelCounts()<<G4endl;
+			unsigned long long int packet = 0xA000000000000000;
+			unsigned long long int row=(*digitsCollection)[itr]->GetPixelIDX();
+			unsigned long long int col=(*digitsCollection)[itr]->GetPixelIDY();
+			unsigned long long int pix = row % 4 + 4*(col%2);
+			unsigned long long int spix =row / 4 * 4;
+			unsigned long long int dcol=col/2*2;
+			unsigned long long int tot=(*digitsCollection)[itr]->GetPixelCounts();
+			unsigned long long int toa=this->GetRunID()*200.;
+			unsigned long long int ftoa=0 & 0xF; //has to be limited to 4bits
+//G4cout<<std::dec<<dcol<<"\t"<<spix<<"\t"<<pix<<"\t"<<col<<"\t"<<row<<"\t"<<tot<<"\t"<<ftoa<<"\t"<<toa<<endl;
+			packet |= dcol<<52;
+			packet |= (spix<<45);
+			packet |= pix<<44;
+			packet |= tot<<(16+4);
+			packet |= ftoa<<(16+0);
+			packet |= toa<<(16+14);
+//G4cout<<hex<<packet<<G4endl;
+			outfile.write(reinterpret_cast<const char *>(&packet),sizeof(packet));
+			
+			/*MC_ROOT_data[i]->add_posX((*digitsCollection)[itr]->GetPixelIDX());
+			MC_ROOT_data[i]->add_posY((*digitsCollection)[itr]->GetPixelIDY());
+			MC_ROOT_data[i]->add_energyTotal((*digitsCollection)[itr]->GetPixelEnergyDep());
+			MC_ROOT_data[i]->add_TOT((*digitsCollection)[itr]->GetPixelCounts());
+			MC_ROOT_data[i]->add_energyMC((*digitsCollection)[itr]->GetPixelEnergyMC());
+			MC_ROOT_data[i]->add_posX_WithRespectToPixel((*digitsCollection)[itr]->Get_posX_WithRespectoToPixel());
+			MC_ROOT_data[i]->add_posY_WithRespectToPixel((*digitsCollection)[itr]->Get_posY_WithRespectoToPixel());
+			MC_ROOT_data[i]->add_posZ_WithRespectToPixel((*digitsCollection)[itr]->Get_posZ_WithRespectoToPixel());*/
+		}
+		outfile.close();
+	}
+}
 
 
 
