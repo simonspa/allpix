@@ -893,7 +893,8 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt) //nurnberg
 			unsigned long long int spix =row / 4 * 4;
 			unsigned long long int dcol=col/2*2;
 			unsigned long long int tot=(*digitsCollection)[itr]->GetPixelCounts();
-			unsigned long long int toa=this->GetRunID()*200.;
+			unsigned long long int spidrTime=0;//this->GetRunID();
+			unsigned long long int toa=this->GetRunID();
 			unsigned long long int ftoa=0 & 0xF; //has to be limited to 4bits
 //G4cout<<std::dec<<dcol<<"\t"<<spix<<"\t"<<pix<<"\t"<<col<<"\t"<<row<<"\t"<<tot<<"\t"<<ftoa<<"\t"<<toa<<endl;
 			packet |= dcol<<52;
@@ -902,6 +903,7 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt) //nurnberg
 			packet |= tot<<(16+4);
 			packet |= ftoa<<(16+0);
 			packet |= toa<<(16+14);
+			packet |= spidrTime;
 //G4cout<<hex<<packet<<G4endl;
 			outfile.write(reinterpret_cast<const char *>(&packet),sizeof(packet));
 			

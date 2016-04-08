@@ -3,7 +3,7 @@
 ####################################################################
 /allpix/det/setId        100
 /allpix/det/setPosition  0.0 0.0 77.0 mm
-/allpix/det/setRotation  0.0 180.0 180.0 deg
+/allpix/det/setRotation  180.0 0.0 180.0 deg
 
 ####################################################################
 #### Telescope planes #### 
@@ -32,21 +32,21 @@
 ####################################################################
 /allpix/det/setId         303
 /allpix/det/setPosition   0.0 0.0 106.5 mm
-/allpix/det/setRotation   -9.0 189.0 180.0 deg
+/allpix/det/setRotation   -9.0 189.0 0.0 deg
 /allpix/det/setLowTHL     13. keV
 ####################################################################
 #### EUD4 #### 
 ####################################################################
 /allpix/det/setId        304
 /allpix/det/setPosition  0.0 0.0 128 mm
-/allpix/det/setRotation  -9.0 189.0 180.0 deg
+/allpix/det/setRotation  -9.0 189.0 0.0 deg
 /allpix/det/setLowTHL    13. keV
 ####################################################################
 #### EUD5 #### 
 ####################################################################
 /allpix/det/setId        305
 /allpix/det/setPosition  0.0 0.0 151.5 mm
-/allpix/det/setRotation  -9.0 189.0 180.0 deg
+/allpix/det/setRotation  -9.0 189.0 0.0 deg
 /allpix/det/setLowTHL    13. keV
 ####################################################################
 
@@ -124,7 +124,7 @@
 # # Source GPS
 /gps/particle pi+
 /gps/pos/type Beam
-/gps/pos/sigma_r 0.5 mm
+/gps/pos/sigma_r 5 mm
 /gps/pos/centre 0.0 0.0 -100.0 mm
 /gps/direction  0 0 1
 
