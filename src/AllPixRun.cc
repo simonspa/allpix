@@ -887,16 +887,20 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt) //nurnberg
 		{
 			//G4cout << i << "\t"<<planes[i]<<"\t" << "\t" << (*digitsCollection)[itr]->GetPixelIDX() << "\t" << (*digitsCollection)[itr]->GetPixelIDY() << "\t" << (*digitsCollection)[itr]->GetPixelCounts()<<G4endl;
 			unsigned long long int packet = 0xA000000000000000;
-			unsigned long long int row=(*digitsCollection)[itr]->GetPixelIDX();
-			unsigned long long int col=(*digitsCollection)[itr]->GetPixelIDY();
+			unsigned long long int col=(*digitsCollection)[itr]->GetPixelIDX();
+			unsigned long long int row=(*digitsCollection)[itr]->GetPixelIDY();
 			unsigned long long int pix = row % 4 + 4*(col%2);
 			unsigned long long int spix =row / 4 * 4;
 			unsigned long long int dcol=col/2*2;
 			unsigned long long int tot=(*digitsCollection)[itr]->GetPixelCounts();
-			unsigned long long int spidrTime=0;//this->GetRunID();
-			unsigned long long int toa=this->GetRunID();
-			unsigned long long int ftoa=0 & 0xF; //has to be limited to 4bits
-//G4cout<<std::dec<<dcol<<"\t"<<spix<<"\t"<<pix<<"\t"<<col<<"\t"<<row<<"\t"<<tot<<"\t"<<ftoa<<"\t"<<toa<<endl;
+		
+			//double time=this->GetRunID()*10.5e-6;
+			unsigned long long int timestamp= /*time*/ this->GetRunID()*10240/* *(4096. * 40000000.) /16 */ ; //10 us per event
+ //G4cout<<std::hex<<timestamp<<G4endl;
+			unsigned long long int spidrTime=(timestamp & 0x3FFFC0000)>>18;//this->GetRunID();
+			unsigned long long int toa=(timestamp&0x3FFF0)>>4;
+			unsigned long long int ftoa=(15-(timestamp & 0xF)); //has to be limited to 4bits
+//G4cout<<std::dec<<dcol<<"\t"<<spix<<"\t"<<pix<<"\t"<<col<<"\t"<<row<<"\t"<<tot<<"\t"<<ftoa<<"\t"<<toa<<"\t"<<spidrTime<<endl;
 			packet |= dcol<<52;
 			packet |= (spix<<45);
 			packet |= pix<<44;
