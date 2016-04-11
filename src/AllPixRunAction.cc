@@ -154,7 +154,7 @@ void AllPixRunAction::EndOfRunAction(const G4Run* aRun)
 	  //G4cout << "Filling SPIDR files: " << aRun->GetEventVector()->size() << " events"<<G4endl;
 	  for (unsigned int ievt=0;ievt<aRun->GetEventVector()->size();ievt++)
 	  {
-		m_AllPixRun->FillSPIDRFiles(aRun->GetEventVector()->at(ievt));
+		m_AllPixRun->FillSPIDRFiles(aRun->GetEventVector()->at(ievt),AllPixMessenger->GetWrite_SPIDR_FolderName());
 	  }
     }
   timer->Stop();

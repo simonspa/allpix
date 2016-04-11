@@ -27,6 +27,9 @@
 #include <map>
 #include <time.h>
 
+#include "sys/types.h"
+#include "sys/stat.h"
+
 
 /**
  * This constructor is called once per run
@@ -843,7 +846,7 @@ void AllPixRun::RecordTelescopeDigits(const G4Event* evt){
 
 
 
-void AllPixRun::FillSPIDRFiles(const G4Event* evt) //nurnberg
+void AllPixRun::FillSPIDRFiles(const G4Event* evt, string folderName) //nurnberg
 {
 	//G4cout<<"FillSpidrFiles"<<G4endl;
 
@@ -865,11 +868,22 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt) //nurnberg
 
 	std::vector<std::string> planes={"W0019_L08","W0013_D04","W0013_E03","W0013_G02","W0013_G03","W0013_J05","W0013_L09"};
 
+	for (unsigned int i=0; i<planes.size();i++)
+	{	
+		// check if folder exists, otherwise create it
+		struct stat st;
+		if ( stat(folderName.c_str(),&st) != 0 )
+		{
+			G4cout << "folder " << folderName << "/"<< planes[i].c_str() <<" does not exist, creating..." << G4endl;
+			system(TString::Format("mkdir -p %s/%s",folderName.c_str(),planes[i].c_str()));
+		}
+	}
+
 	for (G4int i = 0 ; i < nDC ; i++) {
 		std::ofstream outfile;
 		if(this->GetRunID()==0)	
 		{
-			outfile.open(planes[i]+"/"+planes[i]+".dat",std::ofstream::binary /*| std::ofstream::app*/);
+			outfile.open(folderName+"/"+planes[i]+"/"+planes[i]+".dat",std::ofstream::binary /*| std::ofstream::app*/);
 			unsigned long long int packet = 0x4400000000000000;
 			outfile.write(reinterpret_cast<const char *>(&packet),sizeof(packet));
 			packet = 0x4500000000000000;
@@ -877,7 +891,7 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt) //nurnberg
 		}
 		else
 		{
-			outfile.open(planes[i]+"/"+planes[i]+".dat",std::ofstream::binary | std::ofstream::app);
+			outfile.open(folderName+"/"+planes[i]+"/"+planes[i]+".dat",std::ofstream::binary | std::ofstream::app);
 		}
 		// Get a hit in the Collection directly
 		AllPixDigitsCollectionInterface * digitsCollection =

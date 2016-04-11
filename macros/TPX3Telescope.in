@@ -3,7 +3,7 @@
 ####################################################################
 /allpix/det/setId        100
 /allpix/det/setPosition  0.0 0.0 77.0 mm
-/allpix/det/setRotation  0.0 180.0 180 deg
+/allpix/det/setRotation  0.0 180.0 180.0 deg
 
 ####################################################################
 #### Telescope planes #### 
@@ -11,42 +11,42 @@
 ####################################################################
 /allpix/det/setId        300
 /allpix/det/setPosition  0.0 0.0 0.0 mm
-/allpix/det/setRotation  9 9 180 deg
+/allpix/det/setRotation  9.0 9.0 180.0 deg
 /allpix/det/setLowTHL    13. keV
 ####################################################################
 #### EUD1 #### 
 ####################################################################
 /allpix/det/setId         301
 /allpix/det/setPosition   0.0 0.0 23.5 mm
-/allpix/det/setRotation   9.0 9.0 180 deg
+/allpix/det/setRotation   9.0 9.0 180.0 deg
 /allpix/det/setLowTHL     13. keV
 ####################################################################
 #### EUD2 #### 
 ####################################################################
 /allpix/det/setId        302
 /allpix/det/setPosition  0.0 0.0 47.0 mm
-/allpix/det/setRotation  9.0 9.0 180 deg
+/allpix/det/setRotation  9.0 9.0 180.00 deg
 /allpix/det/setLowTHL    13. keV
 ####################################################################
 #### EUD3 #### 
 ####################################################################
 /allpix/det/setId         303
 /allpix/det/setPosition   1.66 0.0 106.5 mm
-/allpix/det/setRotation   -9.0 189.0 180 deg
+/allpix/det/setRotation   -9.0 189.0 180.0 deg
 /allpix/det/setLowTHL     13. keV
 ####################################################################
 #### EUD4 #### 
 ####################################################################
 /allpix/det/setId        304
 /allpix/det/setPosition  1.66 0.0 128 mm
-/allpix/det/setRotation  -9.0 189.0 180 deg
+/allpix/det/setRotation  -9.0 189.0 180.0 deg
 /allpix/det/setLowTHL    13. keV
 ####################################################################
 #### EUD5 #### 
 ####################################################################
 /allpix/det/setId        305
 /allpix/det/setPosition  1.66 0.0 151.5 mm
-/allpix/det/setRotation  -9.0 189.0 180 deg
+/allpix/det/setRotation  -9.0 189.0 180.0 deg
 /allpix/det/setLowTHL    13. keV
 ####################################################################
 
@@ -83,22 +83,20 @@
 # /vis/scene/add/volume World -1 2
 # /vis/viewer/set/style s
 # /vis/open OIX 1024x768-100+100
+# #/vis/open OGLIXm 1024x768-100+100
+# #/vis/open RayTracer
+# #/vis/open OGLIQt
+# #/vis/open OGLSQt
+# #/vis/open OIX
+# #/vis/open OGLIX 1024x768-100+100
+# #/vis/open OGLSXm
+# #/vis/open DAWNFILE
+# #/vis/open OGLSX
+# #/vis/open OGL 600x600-0+0
 # /vis/viewer/set/background 0.4 0.5 0.6
 # /vis/viewer/set/viewpointThetaPhi 20 50
 # /vis/viewer/zoom 2.0
 # /vis/viewer/flush
-
- #/vis/open OGLIXm 1024x768-100+100
- #/vis/open RayTracer
- #/vis/open OGLIQt
- #/vis/open OGLSQt
- #/vis/open OIX
- #/vis/open OGLIX 1024x768-100+100
- #/vis/open OGLSXm
- #/vis/open DAWNFILE
- #/vis/open OGLSX
- #/vis/open OGL 600x600-0+0
-
 
 ####################################################################
 # Draw trajectories at end of event, showing trajectory points as
@@ -111,7 +109,7 @@
 
 ####################################################################
 # Write Telescope files
-/allpix/timepixtelescope/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work
+/allpix/timepixtelescope/setFolderPath /scratch1/Timepix3Telescope/run8
 /allpix/timepixtelescope/setEventIDcolumn 0
 /allpix/timepixtelescope/setSumTOT 1
 /allpix/timepixtelescope/write 0
@@ -121,14 +119,24 @@
 /allpix/WriteROOTFiles/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work
 
 /allpix/WriteSPIDRFiles/write 1
-/allpix/WriteSPIDRFiles/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work
+/allpix/WriteSPIDRFiles/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work/SPIDR
 ####################################################################
 # # Source GPS
 /gps/particle pi+
 /gps/pos/type Beam
 /gps/pos/sigma_r 5.0 mm
-/gps/pos/centre 0.0 5.0 -100.0 mm
-/gps/direction  0 0 1
+/gps/pos/centre 0.0 0.0 -100.0 mm
+#/gps/direction  0 0 1
+#/gps/pos/rot1 -1 0 0
+#/gps/pos/rot2 0 -1 0
+/gps/ang/type iso
+#/gps/ang/sigma_r 20 deg
+/gps/ang/mintheta 179.9925 deg
+/gps/ang/maxtheta 180 deg
+#/gps/ang/minphi 170 deg
+#/gps/ang/maxphi 190 deg
+/gps/ene/type Mono
+/gps/ene/mono 120 GeV
 
 # #/gps/particle e-
 # #/gps/pos/type Point
@@ -146,15 +154,15 @@
 # # ###############
 
 
-/gps/ene/type User
-/gps/hist/type energy
+#/gps/ene/type User
+#/gps/hist/type energy
 # spectra
-/gps/hist/point 120000 1
+#/gps/hist/point 120000 1
 
 /gps/source/list
 
 ####################################################################
 # Shoot
-/allpix/beam/frames 10000
+/allpix/beam/frames 11000
 /allpix/beam/type const 1
 /allpix/beam/on

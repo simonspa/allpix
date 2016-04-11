@@ -69,7 +69,7 @@ public:
   void RecordDigits_all(const G4Event* evt);
 
   //nurnberg
-  void FillSPIDRFiles(const G4Event*); //fills the SPIDR files
+  void FillSPIDRFiles(const G4Event*, string folderName); //fills the SPIDR files
 
 private:
 
