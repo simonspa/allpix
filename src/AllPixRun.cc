@@ -872,7 +872,7 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt, string folderName) //nurnberg
 	{	
 		// check if folder exists, otherwise create it
 		struct stat st;
-		if ( stat(folderName.c_str(),&st) != 0 )
+		if ( stat((folderName+"/"+planes[i]).c_str(),&st) != 0 )
 		{
 			G4cout << "folder " << folderName << "/"<< planes[i].c_str() <<" does not exist, creating..." << G4endl;
 			system(TString::Format("mkdir -p %s/%s",folderName.c_str(),planes[i].c_str()));
@@ -897,7 +897,7 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt, string folderName) //nurnberg
 		AllPixDigitsCollectionInterface * digitsCollection =
 		static_cast<AllPixDigitsCollectionInterface *> (DCe->GetDC(i));
 		G4int nDigits = digitsCollection->entries();
-		for (G4int itr  = 0 ; itr < nDigits ; itr++)
+		for (G4int itr  = 0 ; itr < nDigits; itr++)
 		{
 			//G4cout << i << "\t"<<planes[i]<<"\t" << "\t" << (*digitsCollection)[itr]->GetPixelIDX() << "\t" << (*digitsCollection)[itr]->GetPixelIDY() << "\t" << (*digitsCollection)[itr]->GetPixelCounts()<<G4endl;
 			unsigned long long int packet = 0xA000000000000000;
@@ -909,7 +909,7 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt, string folderName) //nurnberg
 			unsigned long long int tot=(*digitsCollection)[itr]->GetPixelCounts();
 		
 			//double time=this->GetRunID()*10.5e-6;
-			unsigned long long int timestamp= /*time*/ this->GetRunID()*10240/* *(4096. * 40000000.) /16 */ ; //10 us per event
+			unsigned long long int timestamp= /*time*/ this->GetRunID()*10240/1.6+320 /* *(4096. * 40000000.) /16 */ ; //10 us per event +0.5us
  //G4cout<<std::hex<<timestamp<<G4endl;
 			unsigned long long int spidrTime=(timestamp & 0x3FFFC0000)>>18;//this->GetRunID();
 			unsigned long long int toa=(timestamp&0x3FFF0)>>4;
@@ -925,6 +925,25 @@ void AllPixRun::FillSPIDRFiles(const G4Event* evt, string folderName) //nurnberg
 //G4cout<<hex<<packet<<G4endl;
 			outfile.write(reinterpret_cast<const char *>(&packet),sizeof(packet));
 			
+			//add trigger packet to first data stream if dut (last detector) is hit (ALICE investigator) //i==3 is normal scintillator trigger input, define i==1 as investigator trigger
+			if (/*i==3||*/i==1)
+			{
+				AllPixDigitsCollectionInterface * digitsCollectionDUT = static_cast<AllPixDigitsCollectionInterface *> (DCe->GetDC(0/*planes.size()-1*/));
+				G4int nDigitsDUT = digitsCollectionDUT->entries();
+				if (nDigitsDUT>0 && itr==0) 
+				{
+					packet = 0x6F00000000000000;
+					unsigned long long int trigger_timestamp = this->GetRunID()*400*8+20*8; //10e-6/25e-9=400 //+0.5e-6/25e-9=20 per event
+					unsigned int trigger_stamp = fmod(this->GetRunID()*10e-6+0.5e-6,25e-9)/25e-9*12.*8*1.6;
+				
+					//trigger_stamp = (trigger_stamp << 5) & 0x1E0;
+					//trigger_timestamp = (trigger_timestamp<<9) & 0xFFFFFFFFE00;
+					packet |= ((trigger_stamp<<5) & 0x1E0 );
+					packet |= ((trigger_timestamp<<9) & 0xFFFFFFFFE00);
+					//G4cout<<"Creating trigger packet: timestamp:\t"<<hex <<trigger_timestamp<<"\tstamp:"<<trigger_stamp<<endl;
+					outfile.write(reinterpret_cast<const char *>(&packet),sizeof(packet));
+				}
+			}
 			/*MC_ROOT_data[i]->add_posX((*digitsCollection)[itr]->GetPixelIDX());
 			MC_ROOT_data[i]->add_posY((*digitsCollection)[itr]->GetPixelIDY());
 			MC_ROOT_data[i]->add_energyTotal((*digitsCollection)[itr]->GetPixelEnergyDep());

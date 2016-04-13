@@ -1,7 +1,7 @@
 ####################################################################
 #### DUT #### 
 ####################################################################
-/allpix/det/setId        100
+/allpix/det/setId        101
 /allpix/det/setPosition  0.0 0.0 77.0 mm
 /allpix/det/setRotation  0.0 180.0 180.0 deg
 
@@ -115,7 +115,7 @@
 /allpix/timepixtelescope/write 0
 /allpix/config/setOutputPrefixWithPath TelescopeSim
 
-/allpix/WriteROOTFiles/write 0
+/allpix/WriteROOTFiles/write 1
 /allpix/WriteROOTFiles/setFolderPath /afs/cern.ch/user/n/nurnberg/work/clic/allpix_work
 
 /allpix/WriteSPIDRFiles/write 1
@@ -124,14 +124,15 @@
 # # Source GPS
 /gps/particle pi+
 /gps/pos/type Beam
-/gps/pos/sigma_r 5.0 mm
+/gps/pos/sigma_r 0.25 mm
 /gps/pos/centre 0.0 0.0 -100.0 mm
 #/gps/direction  0 0 1
 #/gps/pos/rot1 -1 0 0
 #/gps/pos/rot2 0 -1 0
 /gps/ang/type iso
 #/gps/ang/sigma_r 20 deg
-/gps/ang/mintheta 179.9925 deg
+#/gps/ang/mintheta 179.9925 deg
+/gps/ang/mintheta 180 deg
 /gps/ang/maxtheta 180 deg
 #/gps/ang/minphi 170 deg
 #/gps/ang/maxphi 190 deg
@@ -163,6 +164,6 @@
 
 ####################################################################
 # Shoot
-/allpix/beam/frames 11000
+/allpix/beam/frames 10000
 /allpix/beam/type const 1
 /allpix/beam/on
