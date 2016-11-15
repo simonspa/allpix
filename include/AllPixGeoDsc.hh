@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <tuple>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -448,7 +449,7 @@ private:
 
 	G4String m_EFieldFile;
 
-	vector<vector<vector<G4ThreeVector>>> m_efieldmap;
+	std::vector<std::vector<std::vector<G4ThreeVector>>> m_efieldmap;
 	G4int m_efieldmap_nx, m_efieldmap_ny, m_efieldmap_nz;
 
 	G4bool m_efieldfromfile;

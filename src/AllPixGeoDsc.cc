@@ -4,7 +4,7 @@
  */
 
 #include "AllPixGeoDsc.hh"
-
+#include <vector>
 
 
 AllPixGeoDsc::AllPixGeoDsc() :
@@ -67,8 +67,8 @@ void AllPixGeoDsc::SetEFieldMap(G4String valS){
 
 		efieldinput >> nptsx >> nptsy >> nptsz;
 
-		vector<G4ThreeVector> onedim;
-		vector<vector<G4ThreeVector>> twodim;
+		std::vector<G4ThreeVector> onedim;
+		std::vector<std::vector<G4ThreeVector>> twodim;
 		onedim.reserve(nptsx);
 		twodim.reserve(nptsy);
 
