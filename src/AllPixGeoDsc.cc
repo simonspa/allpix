@@ -159,15 +159,16 @@ G4ThreeVector AllPixGeoDsc::GetEFieldFromMap(G4ThreeVector ppos){
 	G4double pixsize_y = GetPixelY();
 	G4double pixsize_z = GetPixelZ();
 
-	
 	// ppos is the position in mm inside one pixel cell
-	
+
 	ppos = G4ThreeVector(fmod2(ppos[0],pixsize_x), fmod2(ppos[1],pixsize_y), ppos[2]);
 
-	// In order not to check on values outside the pixel:
-	if(ppos[2] > pixsize_z) ppos[2] = pixsize_z-0.0001;
+	// In order not to check on values outside the pixel (fmod can yield negative values (artefacts in the order of 1e-14)):
+	if(ppos[2] >= pixsize_z) ppos[2] = pixsize_z-0.0001;
+	if(ppos[1] < 0) ppos[1] = 0;
+	if(ppos[0] < 0) ppos[0] = 0;
 	
-	// Assuming that point 1 and nx are basically at the same position. The "-1" takes account of the efieldmap starting at the iterator 1.
+
 	// Get the position iside the grid
 
 	G4ThreeVector pposgrid;
@@ -175,6 +176,10 @@ G4ThreeVector AllPixGeoDsc::GetEFieldFromMap(G4ThreeVector ppos){
 	pposgrid[1] = ppos[1]/pixsize_y*(G4double)(m_efieldmap_ny-1);
 	pposgrid[2] = ppos[2]/pixsize_z*(G4double)(m_efieldmap_nz-1);
 
+	// Assuming that point 0 and nx-1 are basically at the same position.
+	if(pposgrid[0] == m_efieldmap_nx-1) pposgrid[0] = 0.;
+	if(pposgrid[1] == m_efieldmap_ny-1) pposgrid[1] = 0.;
+	
 	// Got the position in units of the map coordinates. Do a 3D interpolation of the electric field.
 	// Get the eight neighbors and do three linear interpolations.
 
